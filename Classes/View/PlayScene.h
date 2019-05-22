@@ -15,6 +15,7 @@
 #include "Data\GameDataMgr.h"
 
 using namespace std;
+using namespace ui;
 USING_NS_CC;
 
 class PlayScene : public BaseScene{
@@ -24,7 +25,10 @@ public:
 
 	ui::Widget *bgImage;
 	ui::TextBMFont *scoreLabel;
+	TextBMFont *levelLabel;
+	vector<Sprite *> lilfeSpriteList;
 	ui::Button *homeButton, *soundOnButton, *soundOffButton, *pauseButton, *hintButton;
+	TextBMFont *hintNumLabel;
 	ui::Widget *itemPanel;
 	ui::LoadingBar *timeProgressBar;
 
@@ -44,6 +48,7 @@ public:
 	CREATE_FUNC(PlayScene);
 	virtual bool init();
 	void initGui();
+	void initStatusPanel();
 	void initControlPanel();
 	void initListNumber();
 	void initData();
@@ -51,8 +56,12 @@ public:
 	void addKeyBoardListener();
 	void createNewGame();
 	
+	
 	void updateData();
 	void loadData();
+	void updateCurrentLife();
+	void updateScore();
+	void updateHint();
 
 	string getSpriteFrameNameForNumber(int number);
 	bool checkGameOver();

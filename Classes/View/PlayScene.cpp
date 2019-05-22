@@ -12,6 +12,7 @@
 #include "proj.win32\PauseGameDialog.h"
 
 using namespace ui;
+#define MAX_LIFE 3
 
 PlayScene::PlayScene()
 {
@@ -64,9 +65,9 @@ void PlayScene::initGui()
 	layer->addChild(node);
 
 	this->bgImage = (ui::Widget *)node->getChildByName("bgImage");
-	this->scoreLabel = dynamic_cast<ui::TextBMFont *>(this->bgImage->getChildByName("lb_score"));
 	this->itemPanel = (ui::Widget *) this->bgImage->getChildByName("panel_item");
 	this->timeProgressBar = (ui::LoadingBar *) this->bgImage->getChildByName("bg_progress_time")->getChildByName("progress_time");
+	this->initStatusPanel();
 	initControlPanel();
 }
 
@@ -96,6 +97,7 @@ void PlayScene::initControlPanel()
 	this->soundOffButton->setZoomScale(0.1f);
 	this->soundOffButton->addClickEventListener(CC_CALLBACK_1(PlayScene::onSoundOff, this));
 
+	this->hintNumLabel = (TextBMFont *)(controlPanel->getChildByName("ic_notification")->getChildByName("lb_num_hint"));
 }
 
 void PlayScene::onBackPress()
@@ -105,11 +107,13 @@ void PlayScene::onBackPress()
 
 void PlayScene::initData()
 {
+	this->gameData = GameDataMgr::getInstance();
 	this->board = new Board(8, 14, 28);
 	this->board->initData();
+	this->board->setGameData(this->gameData);
 	this->board->addToBg(this->itemPanel);
 
-	this->gameData = GameDataMgr::getInstance();
+	this->updateData();
 }
 
 void PlayScene::addListener()
@@ -189,7 +193,10 @@ void PlayScene::createNewGame()
 
 void PlayScene::updateData()
 {
-
+	this->levelLabel->setString(StringUtils::toString(this->gameData->currentLevel));
+	this->updateCurrentLife();
+	this->updateScore();
+	this->updateHint();
 }
 
 void PlayScene::loadData()
@@ -227,7 +234,7 @@ void PlayScene::onSoundOff(Ref *obj)
 
 void PlayScene::onHint(Ref *obj)
 {
-
+	this->board->hint();
 }
 
 void PlayScene::updateVisibleSoundButton()
@@ -235,6 +242,44 @@ void PlayScene::updateVisibleSoundButton()
 	bool soundStatus = SoundManager::getInstance()->status;
 	this->soundOnButton->setVisible(soundStatus == SOUND_OFF);
 	this->soundOffButton->setVisible(soundStatus == SOUND_ON);
+}
+
+void PlayScene::updateCurrentLife()
+{
+	for (int i = 0; i < this->lilfeSpriteList.size(); i++){
+		if (i < this->gameData->numLife){
+			this->lilfeSpriteList.at(i)->setVisible(true);
+		}
+		else {
+			this->lilfeSpriteList.at(i)->setVisible(false);
+		}
+	}
+}
+
+void PlayScene::initStatusPanel()
+{
+	Node *statusPanel = this->bgImage->getChildByName("panel_status");
+	this->scoreLabel = dynamic_cast<ui::TextBMFont *>(statusPanel->getChildByName("lb_score"));
+	this->levelLabel = dynamic_cast<TextBMFont *> (statusPanel->getChildByName("lb_level"));
+
+	this->lilfeSpriteList.clear();
+	for (int i = 0; i < MAX_LIFE; i++){
+		char text[20];
+		sprintf(text, "img_heart_%d", i + 1);
+		Sprite *sprite = (Sprite *)(statusPanel->getChildByName(text));
+		this->lilfeSpriteList.push_back(sprite);
+		sprite->setVisible(true);
+	}
+}
+
+void PlayScene::updateScore()
+{
+	this->scoreLabel->setString(StringUtils::toString(this->gameData->score));
+}
+
+void PlayScene::updateHint()
+{
+	this->hintNumLabel->setString(StringUtils::toString(this->gameData->numHint));
 }
 
 

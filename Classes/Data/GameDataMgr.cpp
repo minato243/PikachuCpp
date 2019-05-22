@@ -1,6 +1,8 @@
 /*Created by thaod*/
 #include "GameDataMgr.h"
 #include "base\GameConstant.h"
+#include "View\SceneManager.h"
+#include "View\PlayScene.h"
 
 #define GAME_DATA_KEY "game_data"
 #define HIGH_SCORE_KEY "game_score"
@@ -10,7 +12,7 @@ GameDataMgr *gameDataMgrInstance = NULL;
 GameDataMgr::GameDataMgr()
 {
 	this->mode = 1;
-	this->currentLevel = 1;
+	this->currentLevel = 8;
 	this->score = 0;
 	this->numLife = 3;
 	this->numHint = 3;
@@ -106,5 +108,23 @@ std::string GameDataMgr::getCache(string key, string defaultValue)
 void GameDataMgr::addScore(int num)
 {
 	this->score += num;
+	if (dynamic_cast<PlayScene*>(SceneManager::getInstance()->currentScene)){
+		(dynamic_cast<PlayScene*>(SceneManager::getInstance()->currentScene))->updateData();
+	}
+}
+
+void GameDataMgr::collect()
+{
+	int addScore = this->currentLevel * 10 + 30;
+	this->addScore(addScore);
+}
+
+void GameDataMgr::useHint()
+{
+	this->numHint--;
+
+	if (dynamic_cast<PlayScene*>(SceneManager::getInstance()->currentScene)){
+		(dynamic_cast<PlayScene*>(SceneManager::getInstance()->currentScene))->updateHint();
+	}
 }
 

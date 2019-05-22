@@ -21,5 +21,7 @@ public:
 	void setSelected(bool isSelected);
 	void setVisible(bool isVisible);
 	void setIcon(int iconType);
+	void showHint();
+	void hideHint();
 };
 #endif

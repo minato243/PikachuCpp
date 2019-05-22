@@ -36,10 +36,12 @@ public:
 	void loadHighScore();
 	void setMode(int mode);
 	void setTheme(int theme);
+	void collect();
 	void addScore(int num);
 
 	static std::string getCache(std::string key, std::string defaultValue);
 	static void saveCache(std::string key, std::string value);
 	static GameDataMgr *getInstance();
+	void useHint();
 };
 #endif

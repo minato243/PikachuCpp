@@ -39,7 +39,7 @@ void PauseGameDialog::_removeFromParent()
 	BasePopupDialog::_removeFromParent();
 }
 
-void PauseGameDialog::setCallBackFunc(CCCallFunc *callBackFunc)
+void PauseGameDialog::setCallBackFunc(CallFunc *callBackFunc)
 {
 
 }
